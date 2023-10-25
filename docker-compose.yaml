@@ -1,0 +1,12 @@
+version: "3.7"
+services:
+  node-app:
+    image: nvb:node
+    build:
+      context: ./node
+      dockerfile: ./node/Dockerfile
+  bun-app:
+    image: nvb:bun
+    build: 
+      context: ./bun
+      dockerfile: ./bun/Dockerfile

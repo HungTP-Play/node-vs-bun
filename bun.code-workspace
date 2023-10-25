@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "bun"
+		},
+		{
+			"path": "node"
+		},
+		{
+			"path": "benchmark"
+		}
+	],
+	"settings": {}
+}
