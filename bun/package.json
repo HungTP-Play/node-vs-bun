@@ -10,6 +10,8 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "koa": "^2.14.2"
+    "inversify": "^6.0.2",
+    "koa": "^2.14.2",
+    "reflect-metadata": "^0.1.13"
   }
 }
