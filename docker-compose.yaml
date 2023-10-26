@@ -1,12 +1,38 @@
 version: "3.7"
 services:
+  redis:
+    image: redis:7.2.2-alpine3.18
+    volumes:
+      - ~/data/nvb/redis:/data
+    ports:
+      - 1111:6379
   node-app:
     image: nvb:node
     build:
       context: ./node
-      dockerfile: ./node/Dockerfile
+      dockerfile: ./Dockerfile
+    environment:
+      - APP_PORT=3333
+      - APP_REDIS_PORT=6379
+      - APP_REDIS_HOST=redis
   bun-app:
     image: nvb:bun
     build: 
       context: ./bun
-      dockerfile: ./bun/Dockerfile
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./bun:/app
+    environment:
+      - APP_PORT=2222
+      - APP_REDIS_PORT=6379
+      - APP_REDIS_HOST=redis
+  benchmark:
+    image: nvb:benchmark
+    build:
+      context: ./benchmark
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./benchmark:/app
+    depends_on:
+      - node-app
+      - bun-app
