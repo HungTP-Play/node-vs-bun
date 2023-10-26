@@ -1,11 +1,12 @@
 version: "3.7"
 services:
   redis:
-    image: redis:7.2.2-alpine3.18
+    image: redis/redis-stack
     volumes:
       - ~/data/nvb/redis:/data
     ports:
       - 1111:6379
+      - 8888:8001
   node-app:
     image: nvb:node
     build:
