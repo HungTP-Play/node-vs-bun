@@ -1,4 +1,28 @@
-import { NvbServer } from "./server";
+import { NvbAppImpl } from "./app/implement";
+import { NvbContainer, TYPES } from "./container";
+import { NvbUrlController } from "./features/url/url_controler";
+import { NvbUrlService } from "./features/url/url_service";
+import { Logger, WinstonLogger } from "./logger";
+import { NvbServer } from "./server/server";
 
-const server = new NvbServer();
-server.start();
+/**
+ * Simple setup dependencies, order matter
+ */
+function setUpContainer() {
+    const container = NvbContainer.getInstance();
+    container.set<Logger>(TYPES.Logger, new WinstonLogger());
+
+    container.set<NvbUrlService>(TYPES.UrlService, new NvbUrlService());
+}
+
+function main() {
+    setUpContainer();
+
+    const app = new NvbAppImpl();
+    app.addController(new NvbUrlController());
+
+    const server = new NvbServer(app);
+    server.start();
+}
+
+main();

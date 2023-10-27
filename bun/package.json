@@ -5,7 +5,8 @@
   "devDependencies": {
     "@types/koa": "^2.13.10",
     "@types/winston": "^2.4.4",
-    "bun-types": "latest"
+    "bun-types": "latest",
+    "@types/redis": "^4.0.11"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
@@ -13,6 +14,7 @@
   "dependencies": {
     "inversify": "^6.0.2",
     "koa": "^2.14.2",
+    "redis": "^4.6.10",
     "reflect-metadata": "^0.1.13",
     "winston": "^3.11.0"
   }

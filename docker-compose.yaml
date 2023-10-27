@@ -16,6 +16,10 @@ services:
       - APP_PORT=3333
       - APP_REDIS_PORT=6379
       - APP_REDIS_HOST=redis
+    ports:
+      - 3333:3333
+    depends_on:
+      - redis
   bun-app:
     image: nvb:bun
     build: 
@@ -27,6 +31,11 @@ services:
       - APP_PORT=2222
       - APP_REDIS_PORT=6379
       - APP_REDIS_HOST=redis
+      - LOG_LEVEL=debug
+    ports:
+      - 2222:2222
+    depends_on:
+      - redis
   benchmark:
     image: nvb:benchmark
     build:

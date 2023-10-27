@@ -1,86 +1,50 @@
-import { injectable } from "inversify";
-import 'reflect-metadata';
-import winston from "winston";
+import { createLogger, format, transports } from "winston"
 
 export interface Logger {
     log(...args: any[]): void
-    debug(...args: any[]): void;
-    warn(...args: any[]): void;
-    info(...args: any[]): void;
-    error(...args: any[]): void;
+    info(...args: any[]): void
+    debug(...args: any[]): void
+    warn(...args: any[]): void
+    error(...args: any[]): void
 }
 
-@injectable()
-export class ConsoleLogger implements Logger {
-    log(...args: any[]) {
-        console.log(...args);
-    }
-
-    debug(...args: any[]) {
-        console.debug(...args);
-    }
-
-    info(...args: any[]) {
-        console.info(...args);
-    }
-
-    warn(...args: any[]) {
-        console.warn(...args);
-    }
-
-    error(...args: any[]) {
-        console.error(...args);
-    }
-}
-
-@injectable()
 export class WinstonLogger implements Logger {
-    private logger = winston.createLogger({
-        level: 'debug',
+    private logger = createLogger({
+        level: process.env.LOG_LEVEL?.toLowerCase() ?? "info",
         transports: [
-            new winston.transports.Console({
-                format: winston.format.combine(
-                    winston.format.colorize(),
-                    winston.format.label({
-                        label: 'NvB',
+            new transports.Console({
+                format: format.combine(
+                    format.colorize(),
+                    format.label({
+                        label: 'NvB'
                     }),
-                    winston.format.timestamp(),
-                    winston.format.printf((info: winston.Logform.TransformableInfo) => {
-                        const { level, message, label, timestamp } = info
-                        return `${timestamp} [${label}] [${level}]: ${message}`;
-                    }),
-                ),
-            }),
-        ],
+                    format.timestamp(),
+                    format.printf(content => {
+                        const { level, message, label, timestamp } = content
+                        return `${timestamp} [${level}] [${label}]: ${message}`
+                    })
+                )
+            })
+        ]
     });
 
-    constructor() {
-        this.updateConfig();
+    log(...args: any[]): void {
+        this.logger.info(args.join(" "))
     }
 
-    private updateConfig() {
-        if (process.env.LOG_LEVEL) {
-            this.logger.level = process.env.LOG_LEVEL.toLowerCase();
-        }
+    info(...args: any[]): void {
+        this.logger.info(args.join(" "))
     }
 
-    log(...args: any[]) {
-        this.logger.info(args.join(" "));
+    debug(...args: any[]): void {
+        this.logger.debug(args.join(" "))
     }
 
-    info(...args: any[]) {
-        this.logger.info(args.join(" "));
+    warn(...args: any[]): void {
+        this.logger.warn(args.join(" "))
     }
 
-    debug(...args: any[]) {
-        this.logger.debug(args.join(" "));
-    }
-
-    warn(...args: any[]) {
-        this.logger.warn(args.join(" "));
-    }
-
-    error(...args: any[]) {
-        this.logger.error(args.join(" "));
+    error(...args: any[]): void {
+        this.logger.error(args.join(" "))
     }
 }

@@ -1,21 +1,32 @@
-import { Container } from 'inversify';
-import 'reflect-metadata';
-import { App, NvBApp } from './app/app';
-import { ConfigManager, NvBAppConfigManager } from './app/app_config';
-import { Logger, WinstonLogger } from './logger';
-import { NvbUrlService, NvbUrlServiceImpl } from './url/url_service';
 
 export const TYPES = {
-    Logger: Symbol.for("Logger"),
-    AppConfigManager: Symbol.for('AppConfigManager'),
-    UrlService: Symbol.for('UrlService'),
+    Logger: Symbol.for('Logger'),
     App: Symbol.for('App'),
+    // URL
+    UrlService: Symbol.for('UrlService')
 }
 
-const nvbContainer = new Container();
-nvbContainer.bind<Logger>(TYPES.Logger).to(WinstonLogger)
-nvbContainer.bind<ConfigManager>(TYPES.AppConfigManager).to(NvBAppConfigManager);
-nvbContainer.bind<App>(TYPES.App).to(NvBApp);
-nvbContainer.bind<NvbUrlService>(TYPES.UrlService).to(NvbUrlServiceImpl);
+/**
+ * Simple dependency container
+ */
+export class NvbContainer {
+    private static instance: NvbContainer | undefined = undefined;
+    private constructor() { }
+    private map: Record<string, any> = {};
 
-export { nvbContainer };
+    static getInstance(): NvbContainer {
+        if (NvbContainer.instance === undefined) {
+            NvbContainer.instance = new NvbContainer();
+        }
+
+        return NvbContainer.instance;
+    }
+
+    set<T>(key: Symbol, instance: T) {
+        this.map[key.toString()] = instance;
+    }
+
+    get<T>(key: Symbol): T {
+        return this.map[key.toString()] as T
+    }
+}
