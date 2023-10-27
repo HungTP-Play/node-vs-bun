@@ -1,6 +1,6 @@
 import { NvbAppImpl } from "./app/implement";
 import { NvbContainer, TYPES } from "./container";
-import { NvbUrlController } from "./features/url/url_controler";
+import { NvbUrlController } from "./features/url/url_controller";
 import { NvbUrlService } from "./features/url/url_service";
 import { Logger, WinstonLogger } from "./logger";
 import { NvbServer } from "./server/server";
