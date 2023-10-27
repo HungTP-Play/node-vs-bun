@@ -1,6 +1,6 @@
 import Koa from 'koa';
+import { Route } from './app/controller_interface';
 import { Logger } from './logger';
-import { Route } from './url/url_controller';
 
 export enum StatusCodes {
     // 2xx
