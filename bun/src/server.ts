@@ -14,8 +14,8 @@ export class NvbServer {
         const routes = this.app.routes();
 
         this.server.use(nvbRoutesMiddleware(routes, this.logger));
-        for (const r in routes) {
-            this.logger.info(`[NvbServer] -- Setup route ${r}`);
+        for (const r of routes) {
+            this.logger.info(`[NvbServer] -- Setup route ${r.pattern}`);
         }
 
         this.server.listen(port);

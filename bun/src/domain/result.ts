@@ -1,4 +1,4 @@
 export type NvbResult<T> = {
     data: T
-    error: Error
+    error: Error | undefined
 }

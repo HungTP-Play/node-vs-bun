@@ -1,13 +1,13 @@
 import { injectable } from "inversify";
 import { NvbUrl } from "../domain/url";
 
-export interface NvbUrlManager {
+export interface NvbUrlService {
     shorten(url: NvbUrl): Promise<NvbUrl>;
     get(shortenId: string): Promise<NvbUrl>;
 }
 
 @injectable()
-export class RedisStackNvbUrlManager implements NvbUrlManager {
+export class NvbUrlServiceImpl implements NvbUrlService {
     get(shortenId: string): Promise<NvbUrl> {
         throw new Error("Method not implemented.");
     }

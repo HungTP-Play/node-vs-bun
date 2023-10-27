@@ -1,6 +1,24 @@
 import Koa from 'koa';
-import { AppRouteHandleFunc } from "./app/app";
 import { Logger } from './logger';
+import { Route } from './url/url_controller';
+
+export enum StatusCodes {
+    // 2xx
+    OK = 200,
+    Created = 201,
+    Accepted = 202,
+    NoContent = 204,
+    // 4xx
+    BadRequest = 400,
+    Unauthorized = 401,
+    Forbidden = 403,
+    NotFound = 404,
+    MethodNotAllow = 405,
+    // 5xx
+    InternalServerError = 500,
+    NotImplemented = 501,
+    BadGateway = 502
+}
 
 export function exceptionFilterMiddleware(
     ctx: Koa.ParameterizedContext<Koa.DefaultState, Koa.DefaultContext, any>,
@@ -63,19 +81,26 @@ export function extractPathParam(path: string, pathTemplate: string) {
     return extractedInfo;
 }
 
-export function nvbRoutesMiddleware(routes: Record<string, AppRouteHandleFunc<any>>, logger?: Logger, prefix?: string) {
+export function nvbRoutesMiddleware(routes: Route[], logger?: Logger, prefix?: string) {
     return async (ctx: Koa.ParameterizedContext<Koa.DefaultState, Koa.DefaultContext, any>) => {
         const path = ctx.request.path;
-        for (const r in routes) {
-            if (isRouteMatch(path, r)) {
-                logger?.info(`[${prefix ? prefix : 'NbvServer'}] -- Enter route=${r}`);
-                const result = await routes[r](ctx, [], []);
+        const method = ctx.request.method;
+
+        for (const r of routes) {
+            if (isRouteMatch(path, r.pattern)) {
+                if (r.method.toString().toLowerCase() !== method.toLowerCase()) {
+                    ctx.response.status = StatusCodes.MethodNotAllow;
+                    ctx.response.body = JSON.stringify({
+                        error: 'Wrong method'
+                    });
+                    return
+                }
+
+                const result = await r.handler(ctx);
                 if (result.error !== undefined) {
                     exceptionFilterMiddleware(ctx, result.error);
-                    logger?.info(`[${prefix ? prefix : 'NbvServer'}] -- Route=${r} -- Error ${JSON.stringify({ err: result.error })}`);
                 } else {
                     responsePrepareMiddleware(ctx, result.data);
-                    logger?.info(`[${prefix ? prefix : 'NbvServer'}] -- Route=${r} -- Data`);
                 }
             }
         }
