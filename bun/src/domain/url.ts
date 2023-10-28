@@ -53,11 +53,15 @@ export class NvbUrl {
     }
 
     toJson(): string {
-        return JSON.stringify({
+        return JSON.stringify(this.toObj());
+    }
+
+    toObj() {
+        return {
             id: this.id,
             original: this.original,
             shorten: this.shorten,
-        });
+        }
     }
 }
 

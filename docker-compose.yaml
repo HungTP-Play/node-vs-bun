@@ -32,6 +32,7 @@ services:
       - APP_REDIS_PORT=6379
       - APP_REDIS_HOST=redis
       - LOG_LEVEL=debug
+      - APP_BASE_URL=http://nvb.com
     ports:
       - 2222:2222
     depends_on:

@@ -7,9 +7,6 @@ export type ShortenDto = {
 }
 
 export class NvbUrlController implements NvbController {
-    private container = NvbContainer.getInstance();
-    private service: NvbUrlService = this.container.get<NvbUrlService>(TYPES.UrlService);
-
     async helloHandler(ctx: any, headers?: Headers, params?: Params, body?: Body, queries?: Queries) {
         return {
             data: 'OK',
@@ -18,6 +15,7 @@ export class NvbUrlController implements NvbController {
     }
 
     async shortenHandler(ctx: any, headers?: Headers, params?: Params, body?: Body, queries?: Queries) {
+        const service: NvbUrlService = NvbContainer.getInstance().get<NvbUrlService>(TYPES.UrlService);
         if (!body) {
             return {
                 data: '',
@@ -33,7 +31,7 @@ export class NvbUrlController implements NvbController {
             }
         }
 
-        const result = await this.service.shorten(dto.original);
+        const result = await service.shorten(dto.original);
         if (result.error !== undefined) {
             // TODO: Filter error here
             return {
@@ -43,12 +41,13 @@ export class NvbUrlController implements NvbController {
         }
 
         return {
-            data: result.data.toJson(),
+            data: result.data.toObj(),
             error: undefined
         }
     }
 
     async originalHandler(ctx: any, headers?: Headers, params?: Params, body?: Body, queries?: Queries) {
+        const service: NvbUrlService = NvbContainer.getInstance().get<NvbUrlService>(TYPES.UrlService);
         if (!params || params?.length === 0) {
             return {
                 data: '',
@@ -57,7 +56,7 @@ export class NvbUrlController implements NvbController {
         }
 
         const id = params[0];
-        const result = await this.service.original(id);
+        const result = await service.original(id);
         if (result.error !== undefined) {
             // TODO: Filter error here
             return {
@@ -67,7 +66,7 @@ export class NvbUrlController implements NvbController {
         }
 
         return {
-            data: result.data.toJson(),
+            data: result.data.toObj(),
             error: undefined
         }
     }

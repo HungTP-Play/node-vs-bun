@@ -12,6 +12,7 @@ enum StatusCode {
     BadRequest = 400,
     Unauthorized = 401,
     Forbidden = 403,
+    NotFound = 404,
     MethodIsNotAllow = 405,
     NotAccepted = 406,
     // 5xx
@@ -77,6 +78,8 @@ export class NvbServer {
         return true;
     }
 
+
+
     bindRoutes(routes: Route[]) {
         this.server.use(async (ctx) => {
             const path = ctx.request.path;
@@ -94,21 +97,54 @@ export class NvbServer {
                     const params: Params = this.pathParams(path, r.template);
                     const headers: Headers = {}
                     const queries: Queries = this.queriesParse(path);
+                    const body = JSON.stringify({
+                        "original": "https://google.com"
+                    })
 
                     this.logger.info(`[NvbServer] -- Enter route=${r.template}; headers=${JSON.stringify(headers)}; params=${JSON.stringify(params)}; queries=${JSON.stringify(queries)}`);
-                    
-                    const result = await r.handler(ctx, headers, params, "", queries);
+
+                    const result = await r.handler(ctx, headers, params, body, queries);
+
+                    ctx.request.header['content-type'] = 'application/json'
                     if (result.error !== undefined) {
-                        ctx.response.status = StatusCode.InternalServerError;
+                        ctx.response.status = this.findCode(result.error.message);
+                        ctx.response.body = {
+                            error: result.error.message
+                        }
                     } else {
                         ctx.response.status = StatusCode.Ok;
-                        ctx.response.body = JSON.stringify({
+                        ctx.response.body = {
                             data: result.data
-                        });
+                        };
                     }
                 }
             }
         });
+    }
+
+    findCode(message: string): number {
+        const regex = /c:(\d{3})/; // Regular expression to match "c:" followed by three digits
+        const match = message.match(regex);
+
+        let wantCode = '';
+        if (match && match[1]) {
+            wantCode = match[1]; // Extract the captured digits
+        }
+
+        if (wantCode !== '') {
+            switch (wantCode) {
+                case "400":
+                    return StatusCode.BadRequest
+                case "401":
+                    return StatusCode.Unauthorized
+                case "403":
+                    return StatusCode.Forbidden
+                default:
+                    return StatusCode.InternalServerError
+            }
+        }
+
+        return StatusCode.InternalServerError;
     }
 
     start() {
