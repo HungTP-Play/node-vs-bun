@@ -8,6 +8,14 @@ How to run
 docker-compose up
 ```
 
+## Benchmark Architecture
+
+![Benchmark Architecture](https://i.ibb.co/fXPnWB1/2023-10-28-10-40.png)
+
+## Application Architecture
+
+![Application Architecture](https://i.ibb.co/ns37z9W/2023-10-28-10-48.png)
+
 ## How the test run?
 
 I run the test on 3 routes:
