@@ -3,7 +3,8 @@ export const TYPES = {
     Logger: Symbol.for('Logger'),
     App: Symbol.for('App'),
     // URL
-    UrlService: Symbol.for('UrlService')
+    UrlService: Symbol.for('UrlService'),
+    UrlRepo: Symbol.for('UrlRepo'),
 }
 
 /**
