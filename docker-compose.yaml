@@ -7,7 +7,7 @@ services:
     ports:
       - 1111:6379
       - 8888:8001
-  node-app:
+  node:
     image: nvb:node
     build:
       context: ./node
@@ -22,7 +22,7 @@ services:
       - 3333:3333
     depends_on:
       - redis
-  bun-app:
+  bun:
     image: nvb:bun
     build: 
       context: ./bun
@@ -46,6 +46,9 @@ services:
       dockerfile: ./Dockerfile
     volumes:
       - ./benchmark:/app
+    environment:
+      - BUN_APP_URL=http://bun:2222
+      - NODE_APP_URL=http://node:3333
     depends_on:
-      - node-app
-      - bun-app
+      - node
+      - bun

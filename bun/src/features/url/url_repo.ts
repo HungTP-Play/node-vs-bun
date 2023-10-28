@@ -27,7 +27,7 @@ export class RedisUrlRepo implements NvbUrlRepo {
     });
 
     private async redis() {
-        if (!this.client.isReady) {
+        if (!this.client.isReady && !this.client.isOpen) {
             this.client.connect();
         }
         return this.client;
