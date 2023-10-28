@@ -2,19 +2,22 @@ import { NvbUrlInvalidUrlException } from "./error";
 
 
 export class NvbUrl {
+    private id: string | undefined = undefined;
+
     static fromJson(str: string): NvbUrl {
         const o = JSON.parse(str);
         const original = o['original'];
         const shorten = o['shorten'];
+        const id = o['id'];
 
         if (!original) {
             throw new NvbUrlInvalidUrlException();
         }
 
-        return new NvbUrl(original, shorten);
+        return new NvbUrl(original, shorten, id);
     }
 
-    constructor(private original: string, private shorten?: string) {
+    constructor(private original: string, private shorten?: string, id?: string) {
         this.validateUrl(this.original);
     }
 
@@ -26,10 +29,18 @@ export class NvbUrl {
         return this.shorten
     }
 
+    get urlId(): string | undefined {
+        return this.id;
+    }
+
     set setShorten(shortenUrl: string) {
         this.validateUrl(shortenUrl);
 
         this.shorten = shortenUrl;
+    }
+
+    set setId(id: string) {
+        this.id = id;
     }
 
     private validateUrl(url: string) {
@@ -43,6 +54,7 @@ export class NvbUrl {
 
     toJson(): string {
         return JSON.stringify({
+            id: this.id,
             original: this.original,
             shorten: this.shorten,
         });

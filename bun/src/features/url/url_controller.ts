@@ -2,6 +2,10 @@ import { Body, Headers, NvbController, Params, Queries, Route } from "../../app/
 import { NvbContainer, TYPES } from "../../container";
 import { NvbUrlService } from "./url_service";
 
+export type ShortenDto = {
+    original: string
+}
+
 export class NvbUrlController implements NvbController {
     private container = NvbContainer.getInstance();
     private service: NvbUrlService = this.container.get<NvbUrlService>(TYPES.UrlService);
@@ -14,15 +18,56 @@ export class NvbUrlController implements NvbController {
     }
 
     async shortenHandler(ctx: any, headers?: Headers, params?: Params, body?: Body, queries?: Queries) {
+        if (!body) {
+            return {
+                data: '',
+                error: new Error('Empty body - c:400')
+            }
+        }
+
+        const dto = JSON.parse(body as string) as ShortenDto;
+        if (!dto.original) {
+            return {
+                data: '',
+                error: new Error('Empty original - c:400')
+            }
+        }
+
+        const result = await this.service.shorten(dto.original);
+        if (result.error !== undefined) {
+            // TODO: Filter error here
+            return {
+                data: '',
+                error: result.error
+            }
+        }
+
         return {
-            data: 'Shorten OK',
+            data: result.data.toJson(),
             error: undefined
         }
     }
 
     async originalHandler(ctx: any, headers?: Headers, params?: Params, body?: Body, queries?: Queries) {
+        if (!params || params?.length === 0) {
+            return {
+                data: '',
+                error: new Error('No id to search - code:400')
+            }
+        }
+
+        const id = params[0];
+        const result = await this.service.original(id);
+        if (result.error !== undefined) {
+            // TODO: Filter error here
+            return {
+                data: '',
+                error: result.error
+            }
+        }
+
         return {
-            data: 'Original OK',
+            data: result.data.toJson(),
             error: undefined
         }
     }

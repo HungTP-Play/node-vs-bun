@@ -2,6 +2,7 @@ import { beforeAll, beforeEach, describe, expect, it, mock, test } from "bun:tes
 import { NvbContainer, TYPES } from "../../container";
 import { NvbResult } from "../../domain/result";
 import { EMPTY_URL, NvbUrl } from "../../domain/url";
+import { Logger, WinstonLogger } from "../../logger";
 import { NvbUrlRepo } from "./url_repo";
 import { NvbUrlService } from "./url_service";
 
@@ -59,6 +60,7 @@ describe('Test UrlService', () => {
 
     beforeAll(() => {
         const container = NvbContainer.getInstance();
+        container.set<Logger>(TYPES.Logger, new WinstonLogger());
         container.set<NvbUrlRepo>(TYPES.UrlRepo, mockUrlRepo);
     });
 
