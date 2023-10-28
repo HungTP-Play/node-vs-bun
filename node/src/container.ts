@@ -1,12 +1,33 @@
-import { Container } from 'inversify';
-import 'reflect-metadata';
-import { ConsoleLogger, Logger } from './logger';
 
 export const TYPES = {
-    Logger: Symbol.for("Logger")
+    Logger: Symbol.for('Logger'),
+    App: Symbol.for('App'),
+    // URL
+    UrlService: Symbol.for('UrlService'),
+    UrlRepo: Symbol.for('UrlRepo'),
 }
 
-const nvbContainer = new Container();
-nvbContainer.bind<Logger>(TYPES.Logger).to(ConsoleLogger)
+/**
+ * Simple dependency container
+ */
+export class NvbContainer {
+    private static instance: NvbContainer | undefined = undefined;
+    private constructor() { }
+    private map: Record<string, any> = {};
 
-export { nvbContainer };
+    static getInstance(): NvbContainer {
+        if (NvbContainer.instance === undefined) {
+            NvbContainer.instance = new NvbContainer();
+        }
+
+        return NvbContainer.instance;
+    }
+
+    set<T>(key: Symbol, instance: T) {
+        this.map[key.toString()] = instance;
+    }
+
+    get<T>(key: Symbol): T {
+        return this.map[key.toString()] as T
+    }
+}

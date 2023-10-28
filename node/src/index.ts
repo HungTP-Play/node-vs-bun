@@ -1,10 +1,30 @@
-import Koa from 'koa';
-import { TYPES, nvbContainer } from './container';
-import { Logger } from './logger';
+import { NvbAppImpl } from "./app/implement";
+import { NvbContainer, TYPES } from "./container";
+import { NvbUrlController } from "./features/url/url_controller";
+import { NvbUrlRepo, RedisUrlRepo } from "./features/url/url_repo";
+import { NvbUrlService } from "./features/url/url_service";
+import { Logger, WinstonLogger } from "./logger";
+import { NvbServer } from "./server/server";
 
-const logger = nvbContainer.get<Logger>(TYPES.Logger);
+/**
+ * Simple setup dependencies, order matter
+ */
+function setUpContainer() {
+    const container = NvbContainer.getInstance();
+    container.set<Logger>(TYPES.Logger, new WinstonLogger());
 
-const app = new Koa();
+    container.set<NvbUrlRepo>(TYPES.UrlRepo, RedisUrlRepo.getInstance());
+    container.set<NvbUrlService>(TYPES.UrlService, new NvbUrlService());
+}
 
-logger.log(`APP IS RUNNING ON PORT 3333`);
-app.listen(3333);
+function main() {
+    setUpContainer();
+
+    const app = new NvbAppImpl();
+    app.addController(new NvbUrlController());
+
+    const server = new NvbServer(app);
+    server.start();
+}
+
+main();
