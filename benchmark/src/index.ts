@@ -22,6 +22,13 @@ let SCORE: {
 const NUM_RUN = 1000000;
 
 async function doHello(bunUrl: string, nodeUrl: string) {
+    for (let i = 0; i < NUM_RUN; i++) {
+        const startTime = Date.now();
+        await agent.get(`${bunUrl}/hello`);
+        const endTime = Date.now();
+        SCORE['hello'].bun += (endTime - startTime);
+    }
+
     // Node first then Bun later
     for (let i = 0; i < NUM_RUN; i++) {
         const startTime = Date.now();
@@ -29,16 +36,16 @@ async function doHello(bunUrl: string, nodeUrl: string) {
         const endTime = Date.now();
         SCORE['hello'].node += (endTime - startTime);
     }
-
-    for (let i = 0; i < NUM_RUN; i++) {
-        const startTime = Date.now();
-        await agent.get(`${bunUrl}/hello`);
-        const endTime = Date.now();
-        SCORE['hello'].bun += (endTime - startTime);
-    }
 }
 
 async function doShorten(bunUrl: string, nodeUrl: string) {
+    for (let i = 0; i < NUM_RUN; i++) {
+        const startTime = Date.now();
+        await agent.post(`${bunUrl}/shorten`);
+        const endTime = Date.now();
+        SCORE['shorten'].bun += (endTime - startTime);
+    }
+
     // Node first then Bun later
     for (let i = 0; i < NUM_RUN; i++) {
         const startTime = Date.now();
@@ -46,30 +53,22 @@ async function doShorten(bunUrl: string, nodeUrl: string) {
         const endTime = Date.now();
         SCORE['shorten'].node += (endTime - startTime);
     }
-
-    for (let i = 0; i < NUM_RUN; i++) {
-        const startTime = Date.now();
-        await agent.post(`${nodeUrl}/shorten`);
-        const endTime = Date.now();
-        SCORE['shorten'].bun += (endTime - startTime);
-    }
-
 }
 
 async function doOriginal(bunUrl: string, nodeUrl: string) {
+    for (let i = 0; i < NUM_RUN; i++) {
+        const startTime = Date.now();
+        await agent.get(`${bunUrl}/original/1`);
+        const endTime = Date.now();
+        SCORE['original'].bun += (endTime - startTime);
+    }
+
     // Node first then Bun later
     for (let i = 0; i < NUM_RUN; i++) {
         const startTime = Date.now();
         await agent.get(`${nodeUrl}/original/1`);
         const endTime = Date.now();
         SCORE['original'].node += (endTime - startTime);
-    }
-
-    for (let i = 0; i < NUM_RUN; i++) {
-        const startTime = Date.now();
-        await agent.get(`${bunUrl}/original/1`);
-        const endTime = Date.now();
-        SCORE['original'].bun += (endTime - startTime);
     }
 }
 
