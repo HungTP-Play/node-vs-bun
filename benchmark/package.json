@@ -3,7 +3,7 @@
   "module": "index.ts",
   "type": "module",
   "devDependencies": {
-    "@types/superagent": "^4.1.20",
+    "@types/superagent": "^8.0.0",
     "bun-types": "latest"
   },
   "peerDependencies": {
